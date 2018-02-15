@@ -4,6 +4,8 @@
 
 2. Finish Payment Aggregate. See the PaymentTest (I did not succeed in getting the test running. It requires tweaking in the text fixture setup)
 
+3. Implement Product aggregate and tests
+
 See interaction model for overview of interactions:
 
 ![Interaction model](./eventually-consistent-webshop.jpg)   
