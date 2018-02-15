@@ -42,10 +42,18 @@ public class Payment {
     }
 
     @CommandHandler
-    public void handle(DepositAmountCommand addCreditCommand){
+    public void handle(DepositAmountCommand depositAmountCommand){
+        if(isPayed){
+            throw new IllegalStateException("Amount already payed");
+        }
+
         // TODO implement
-        if(addCreditCommand.getAmount() == 5){
-            throw new IllegalStateException();
+        amount -= depositAmountCommand.getAmount();
+        if(amount == 0){
+            // Emit Payment successful
+            isPayed = true;
+        } else if(amount < 0){
+            throw new IllegalStateException("Deposit is to large for standing amount");
         }
     }
 
