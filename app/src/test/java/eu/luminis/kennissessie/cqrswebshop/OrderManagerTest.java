@@ -12,6 +12,7 @@ import eu.luminis.kennissessie.cqrswebshop.api.ProductAmountDto;
 import eu.luminis.kennissessie.cqrswebshop.api.command.CancelPaymentCommand;
 import eu.luminis.kennissessie.cqrswebshop.api.command.CreatePaymentCommand;
 import eu.luminis.kennissessie.cqrswebshop.api.command.ReserveStockCommand;
+import eu.luminis.kennissessie.cqrswebshop.api.command.UndoStockReservationCommand;
 import eu.luminis.kennissessie.cqrswebshop.api.event.OrderFulfilledEvent;
 import eu.luminis.kennissessie.cqrswebshop.api.event.OrderRequestedEvent;
 import eu.luminis.kennissessie.cqrswebshop.api.event.PaymentSuccessfulEvent;
@@ -48,7 +49,7 @@ public class OrderManagerTest {
         new SagaTestFixture<>(OrderManager.class)
                 .givenAPublished(new OrderRequestedEvent(orderId, products, orderTotal, paymentId))
                 .whenTimeElapses(Duration.ofMinutes(11))
-                .expectDispatchedCommands(new CancelPaymentCommand(paymentId));
+                .expectDispatchedCommands(new CancelPaymentCommand(paymentId), new UndoStockReservationCommand(productId, 1));
     }
 
     @Test
