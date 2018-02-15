@@ -59,7 +59,6 @@ public class OrderManager {
     @SagaEventHandler(associationProperty = "paymentId")
     public void handle(PaymentSuccessfulEvent paymentSuccessfulEvent){
         // TODO: Emit OrderFulfilledEvent
-        System.out.println();
     }
 
 
