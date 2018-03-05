@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.EventMessage;
-import org.axonframework.test.aggregate.AggregateTestFixture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -44,39 +43,31 @@ public class PaymentTest {
     }
 
     @Test
-    public void testPaymentSuccessfulInOneDeposit() {
-        UUID paymentId = UUID.randomUUID();
-        long orderTotal = 10;
-
-
-        new AggregateTestFixture<>(Payment.class)
-                .givenCommands(new CreatePaymentCommand(paymentId, orderTotal))
-                .when(new DepositAmountCommand(paymentId, 10))
-                .expectEvents(new PaymentSuccessfulEvent(paymentId));
-    }
-
-    @Test
     public void testPaymentSuccessfulInMultipleDeposits() {
         UUID paymentId = UUID.randomUUID();
         long orderTotal = 10;
+        Payment payment = new Payment(new CreatePaymentCommand(paymentId, orderTotal));
+        injectEventBusMock(payment);
 
+        payment.handle(new DepositAmountCommand(paymentId, 4));
+        payment.handle(new DepositAmountCommand(paymentId, 4));
+        payment.handle(new DepositAmountCommand(paymentId, 2));
 
-        new AggregateTestFixture<>(Payment.class)
-                .givenCommands(new CreatePaymentCommand(paymentId, orderTotal), new DepositAmountCommand(paymentId, 4), new DepositAmountCommand(paymentId, 4))
-                .when(new DepositAmountCommand(paymentId, 2))
-                .expectEvents(new PaymentSuccessfulEvent(paymentId));
+        verify(eventBusMock).publish(eventMessageArgumentCaptor.capture());
+
+        assertEquals(new PaymentSuccessfulEvent(paymentId), eventMessageArgumentCaptor.getValue().getPayload());
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testFailureInOverDeposit() {
         UUID paymentId = UUID.randomUUID();
         long orderTotal = 10;
+        Payment payment = new Payment(new CreatePaymentCommand(paymentId, orderTotal));
+        injectEventBusMock(payment);
 
-
-        new AggregateTestFixture<>(Payment.class)
-                .givenCommands(new CreatePaymentCommand(paymentId, orderTotal), new DepositAmountCommand(paymentId, 4), new DepositAmountCommand(paymentId, 4))
-                .when(new DepositAmountCommand(paymentId, 5))
-                .expectException(IllegalStateException.class);
+        payment.handle(new DepositAmountCommand(paymentId, 4));
+        payment.handle(new DepositAmountCommand(paymentId, 4));
+        payment.handle(new DepositAmountCommand(paymentId, 5));
     }
 
     private void injectEventBusMock(Payment payment) {
