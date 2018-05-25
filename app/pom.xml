@@ -10,6 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>customerservice</artifactId>
+    <properties>
+        <axon.version>3.2.2</axon.version>
+    </properties>
 
     <dependencies>
         <dependency>
