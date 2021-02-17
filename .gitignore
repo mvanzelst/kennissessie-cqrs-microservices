@@ -12,6 +12,7 @@ buildNumber.properties
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
+
 ### Java template
 # Compiled class file
 *.class
@@ -43,6 +44,8 @@ hs_err_pid*
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
+*.iml
+*.ipr
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
